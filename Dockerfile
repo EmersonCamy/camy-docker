@@ -8,9 +8,9 @@
 
 FROM        --platform=$TARGETOS/$TARGETARCH ghcr.io/pterodactyl/yolks:java_25
 
-LABEL       author="EmersonCamy"
+LABEL       author="CamyHost"
 LABEL       org.opencontainers.image.source="https://github.com/EmersonCamy/hytale-docker"
-LABEL       org.opencontainers.image.description="Hytale Server with optional auto-update"
+LABEL       org.opencontainers.image.description="Hytale CamyHost - Servidor Hytale com AUTO_UPDATE opcional"
 LABEL       org.opencontainers.image.licenses=MIT
 
 USER        root

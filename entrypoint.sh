@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Hytale Server Entrypoint - Com controle de Auto-Update
+# Hytale CamyHost - Entrypoint
 #
 # AUTO_UPDATE=0 -> Apenas inicia o servidor (rapido)
 # AUTO_UPDATE=1 -> Baixa/atualiza o jogo antes de iniciar
@@ -10,7 +10,7 @@ set -e
 cd /home/container
 
 echo "=========================================="
-echo "   Hytale Server - Entrypoint"
+echo "       Hytale CamyHost"
 echo "=========================================="
 echo ""
 

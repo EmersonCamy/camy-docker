@@ -1,4 +1,4 @@
-# Hytale Server - Imagem Docker Personalizada
+# Hytale CamyHost - Imagem Docker
 
 Imagem Docker para Pterodactyl com controle de AUTO_UPDATE.
 
