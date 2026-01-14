@@ -76,7 +76,8 @@ refresh_oauth_tokens() {
     fi
 }
 
-# Funcao para obter session/identity tokens
+# Funcao para carregar access token OAuth diretamente
+# O servidor Hytale pode usar o access_token OAuth para autenticacao interna
 get_session_tokens() {
     if [ ! -f "$OAUTH_TOKENS" ]; then
         return 1
@@ -87,44 +88,30 @@ get_session_tokens() {
         return 1
     fi
 
-    # Obtem profile
-    echo "[Auth] Obtendo perfil..."
+    # Obtem profile para verificar se o token e valido
+    echo "[Auth] Verificando token OAuth..."
     PROFILE_RESPONSE=$(curl -s -H "Authorization: Bearer $ACCESS_TOKEN" "$PROFILE_URL" 2>/dev/null)
     PROFILE_UUID=$(echo "$PROFILE_RESPONSE" | jq -r '.profiles[0].uuid' 2>/dev/null)
     PROFILE_NAME=$(echo "$PROFILE_RESPONSE" | jq -r '.profiles[0].username' 2>/dev/null)
 
     if [ -z "$PROFILE_UUID" ] || [ "$PROFILE_UUID" = "null" ]; then
-        echo "[Auth] Erro ao obter perfil: $PROFILE_RESPONSE"
+        echo "[Auth] Token invalido ou expirado"
         return 1
     fi
 
     echo "[Auth] Profile: $PROFILE_NAME ($PROFILE_UUID)"
+    echo "[Auth] Token OAuth valido!"
 
-    # Cria sessao
-    echo "[Auth] Criando sessao..."
-    SESSION_RESPONSE=$(curl -s -X POST "$SESSION_URL" \
-        -H "Authorization: Bearer $ACCESS_TOKEN" \
-        -H "Content-Type: application/json" \
-        -d "{\"uuid\": \"$PROFILE_UUID\"}" 2>/dev/null)
-
-    SESSION_TOKEN=$(echo "$SESSION_RESPONSE" | jq -r '.sessionToken' 2>/dev/null)
-    IDENTITY_TOKEN=$(echo "$SESSION_RESPONSE" | jq -r '.identityToken' 2>/dev/null)
-
-    if [ -n "$SESSION_TOKEN" ] && [ "$SESSION_TOKEN" != "null" ]; then
-        cat > "$SERVER_TOKENS" << EOF
+    # Salva o access_token como session_token para o servidor usar
+    cat > "$SERVER_TOKENS" << EOF
 {
-    "session_token": "$SESSION_TOKEN",
-    "identity_token": "$IDENTITY_TOKEN",
+    "session_token": "$ACCESS_TOKEN",
+    "identity_token": "$ACCESS_TOKEN",
     "profile_uuid": "$PROFILE_UUID",
     "created_at": "$(date -Iseconds)"
 }
 EOF
-        echo "[Auth] Tokens de sessao obtidos!"
-        return 0
-    else
-        echo "[Auth] Erro ao criar sessao: $SESSION_RESPONSE"
-        return 1
-    fi
+    return 0
 }
 
 # Funcao para iniciar device flow (primeira vez)
