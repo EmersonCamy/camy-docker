@@ -196,12 +196,15 @@ start_device_flow() {
     return 1
 }
 
-# Funcao para carregar tokens de sessao
+# Funcao para carregar tokens de sessao (exporta como variaveis de ambiente do Hytale)
 load_session_tokens() {
     if [ -f "$SERVER_TOKENS" ]; then
-        export SESSION_TOKEN=$(jq -r '.session_token' "$SERVER_TOKENS" 2>/dev/null)
-        export IDENTITY_TOKEN=$(jq -r '.identity_token' "$SERVER_TOKENS" 2>/dev/null)
-        if [ -n "$SESSION_TOKEN" ] && [ "$SESSION_TOKEN" != "null" ]; then
+        local ST=$(jq -r '.session_token' "$SERVER_TOKENS" 2>/dev/null)
+        local IT=$(jq -r '.identity_token' "$SERVER_TOKENS" 2>/dev/null)
+        if [ -n "$ST" ] && [ "$ST" != "null" ]; then
+            # Exporta com nomes que o Hytale reconhece automaticamente
+            export HYTALE_SERVER_SESSION_TOKEN="$ST"
+            export HYTALE_SERVER_IDENTITY_TOKEN="$IT"
             return 0
         fi
     fi
@@ -273,16 +276,13 @@ echo "=========================================="
 echo "   Iniciando Hytale Server..."
 echo "=========================================="
 
-# Monta argumentos de token
-TOKEN_ARGS=""
-if [ -n "$SESSION_TOKEN" ] && [ "$SESSION_TOKEN" != "null" ]; then
-    TOKEN_ARGS="--session-token $SESSION_TOKEN"
-    echo "[Auth] Session token: OK"
+# Verifica tokens de ambiente
+if [ -n "$HYTALE_SERVER_SESSION_TOKEN" ]; then
+    echo "[Auth] Session token: OK (env)"
 fi
-if [ -n "$IDENTITY_TOKEN" ] && [ "$IDENTITY_TOKEN" != "null" ]; then
-    TOKEN_ARGS="$TOKEN_ARGS --identity-token $IDENTITY_TOKEN"
-    echo "[Auth] Identity token: OK"
+if [ -n "$HYTALE_SERVER_IDENTITY_TOKEN" ]; then
+    echo "[Auth] Identity token: OK (env)"
 fi
 
 echo ""
-exec /java.sh $TOKEN_ARGS "$@"
+exec /java.sh "$@"
