@@ -65,10 +65,10 @@ get_server_tokens() {
         return 1
     fi
 
-    # Obtem o profile UUID
+    # Obtem o profile UUID (endpoint correto: account-data.hytale.com)
     echo "[Auth] Obtendo perfil..."
     PROFILE_RESPONSE=$(curl -s -H "Authorization: Bearer $ACCESS_TOKEN" \
-        "https://sessions.hytale.com/my-account/get-profiles" 2>/dev/null)
+        "https://account-data.hytale.com/my-account/get-profiles" 2>/dev/null)
 
     PROFILE_UUID=$(echo "$PROFILE_RESPONSE" | jq -r '.[0].uuid' 2>/dev/null)
 
