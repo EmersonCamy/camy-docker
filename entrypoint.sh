@@ -276,13 +276,16 @@ echo "=========================================="
 echo "   Iniciando Hytale Server..."
 echo "=========================================="
 
-# Verifica tokens de ambiente
+# Monta argumentos de token a partir das variaveis de ambiente
+TOKEN_ARGS=""
 if [ -n "$HYTALE_SERVER_SESSION_TOKEN" ]; then
-    echo "[Auth] Session token: OK (env)"
+    TOKEN_ARGS="--session-token $HYTALE_SERVER_SESSION_TOKEN"
+    echo "[Auth] Session token: OK"
 fi
 if [ -n "$HYTALE_SERVER_IDENTITY_TOKEN" ]; then
-    echo "[Auth] Identity token: OK (env)"
+    TOKEN_ARGS="$TOKEN_ARGS --identity-token $HYTALE_SERVER_IDENTITY_TOKEN"
+    echo "[Auth] Identity token: OK"
 fi
 
 echo ""
-exec /java.sh "$@"
+exec /java.sh $TOKEN_ARGS "$@"
