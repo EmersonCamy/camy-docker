@@ -7,7 +7,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/hytale-server
+  IMAGE_NAME: ${{ github.repository_owner }}/camy-docker
 
 jobs:
   build:
