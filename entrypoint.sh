@@ -90,14 +90,15 @@ get_session_tokens() {
     # Obtem profile
     echo "[Auth] Obtendo perfil..."
     PROFILE_RESPONSE=$(curl -s -H "Authorization: Bearer $ACCESS_TOKEN" "$PROFILE_URL" 2>/dev/null)
-    PROFILE_UUID=$(echo "$PROFILE_RESPONSE" | jq -r '.[0].uuid' 2>/dev/null)
+    PROFILE_UUID=$(echo "$PROFILE_RESPONSE" | jq -r '.profiles[0].uuid' 2>/dev/null)
+    PROFILE_NAME=$(echo "$PROFILE_RESPONSE" | jq -r '.profiles[0].username' 2>/dev/null)
 
     if [ -z "$PROFILE_UUID" ] || [ "$PROFILE_UUID" = "null" ]; then
         echo "[Auth] Erro ao obter perfil: $PROFILE_RESPONSE"
         return 1
     fi
 
-    echo "[Auth] Profile: $PROFILE_UUID"
+    echo "[Auth] Profile: $PROFILE_NAME ($PROFILE_UUID)"
 
     # Cria sessao
     echo "[Auth] Criando sessao..."
