@@ -66,4 +66,14 @@ echo "   Iniciando Hytale Server..."
 echo "=========================================="
 echo ""
 
-exec /java.sh "$@"
+# Se modo autenticado, envia comando de auth automaticamente apos o servidor iniciar
+if [ "${HYTALE_AUTH_MODE}" = "authenticated" ]; then
+    echo "[CamyHost] Modo autenticado - enviando /auth login device automaticamente..."
+    {
+        sleep 20  # Aguarda servidor iniciar
+        echo "/auth login device"
+        cat  # Continua passando input do usuario
+    } | /java.sh "$@"
+else
+    exec /java.sh "$@"
+fi
